@@ -1,0 +1,12 @@
+{
+  "name": "cleartext-jobs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "IT jobs in Europe, collected from public company job boards, with the salary shown first.",
+  "scripts": {
+    "collect": "node src/collect.mjs",
+    "test": "node test/run.mjs"
+  },
+  "engines": { "node": ">=20" }
+}

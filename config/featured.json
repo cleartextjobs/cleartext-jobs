@@ -1,0 +1,12 @@
+{
+  "_notes": "Paid features. 'featured': jobs already on the site; paste the link of the original posting and the last day of the feature. 'direct': jobs from companies not in our sources; fill in the fields shown in the example. Entries past their 'until' date are ignored automatically.",
+  "featured": [],
+  "direct": [],
+  "_example_featured": { "url": "https://jobs.example.com/123", "until": "2026-12-31" },
+  "_example_direct": {
+    "title": "Senior Backend Engineer", "company": "Example Lda", "url": "https://example.com/careers/backend",
+    "location": "Lisbon", "countries": ["Portugal"], "workplace": "Hybrid",
+    "salary": { "min": 45000, "max": 60000, "currency": "EUR", "period": "year" },
+    "stack": ["Java", "AWS"], "until": "2026-12-31"
+  }
+}

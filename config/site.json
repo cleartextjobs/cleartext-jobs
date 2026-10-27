@@ -1,0 +1,8 @@
+{
+  "_notes": "Settings shown in the 'Feature a job' section. Fill in contactEmail and, once created, the payment link (e.g. a Stripe Payment Link). Price is per featured job.",
+  "price": 49,
+  "currency": "EUR",
+  "days": 30,
+  "contactEmail": "cleartextjobs@gmail.com",
+  "paymentLink": ""
+}
