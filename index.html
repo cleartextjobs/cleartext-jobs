@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<!--page-start-->
+<title>Cleartext Jobs</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="IT jobs in Europe from companies' own job boards, with the salary shown first.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Martian+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column; salary is the loudest thing on every row, marked like a highlighter on paper. */
+:root {
+  --paper: #F1F4F8;
+  --surface: #FFFFFF;
+  --ink: #131B2A;
+  --muted: #56617A;
+  --rule: #D5DCE6;
+  --mark: #FFE45C;
+  --mark-ink: #191708;
+  --link: #2145C4;
+  --focus: #2145C4;
+  --tint: #FFF8D1;
+  --sans: "Instrument Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "Martian Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-3: clamp(2rem, 1.3rem + 3.2vw, 3.4rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0F141E; --surface: #161D2A; --ink: #E5E9F0; --muted: #9AA4B6; --rule: #283245;
+    --mark: #E7CC38; --mark-ink: #15130A; --link: #93AAFF; --focus: #93AAFF; --tint: #2A2614; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0F141E; --surface: #161D2A; --ink: #E5E9F0; --muted: #9AA4B6; --rule: #283245;
+  --mark: #E7CC38; --mark-ink: #15130A; --link: #93AAFF; --focus: #93AAFF; --tint: #2A2614; color-scheme: dark;
+}
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: var(--step-0); line-height: 1.5; }
+.wrap { max-width: 64rem; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: var(--link); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 3px; }
+
+/* Header and hero */
+.top { padding-block: 1.25rem 0; display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.brand { font-weight: 700; font-size: var(--step-1); letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
+.brand span { font-family: var(--mono); font-weight: 400; font-size: 0.8em; color: var(--muted); }
+.updated { color: var(--muted); font-size: var(--step--1); }
+.hero { padding-block: 2.5rem 2rem; display: grid; gap: 1.25rem; }
+.hero h1 { margin: 0; font-size: var(--step-3); line-height: 1.04; letter-spacing: -0.025em; font-weight: 700; max-width: 16ch; text-wrap: balance; }
+.decrypt { display: grid; gap: 0.35rem; max-width: 40rem; }
+.decrypt .role { color: var(--muted); font-size: var(--step--1); min-height: 1.4em; }
+.decrypt .line { font-family: var(--mono); font-size: clamp(1rem, 0.8rem + 1.1vw, 1.45rem); }
+.decrypt .key { color: var(--muted); }
+.lede { margin: 0; color: var(--muted); max-width: 44rem; }
+.lede strong { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+mark.sal { background: linear-gradient(transparent 12%, var(--mark) 12%, var(--mark) 88%, transparent 88%); color: var(--mark-ink); padding: 0 0.25em; font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+/* Filters */
+.filters { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper); border-bottom: 1px solid var(--rule); padding-block: 0.75rem; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+.filters form { display: grid; grid-template-columns: minmax(12rem, 2fr) repeat(4, minmax(8rem, 1fr)); gap: 0.5rem; align-items: center; }
+.filters .row2 { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; }
+label.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+input[type=search], select { font: inherit; font-size: 0.9375rem; color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 0.5rem 0.6rem; width: 100%; min-width: 0; }
+.check { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9375rem; cursor: pointer; }
+.check input { width: 1.05rem; height: 1.05rem; accent-color: var(--link); }
+.count { color: var(--muted); font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+.sort { display: inline-flex; align-items: center; gap: 0.4rem; font-size: var(--step--1); color: var(--muted); }
+.sort select { width: auto; padding-block: 0.3rem; font-size: var(--step--1); }
+@media (max-width: 760px) {
+  .filters { position: static; }
+  .filters form { grid-template-columns: 1fr 1fr; }
+  .filters #q { grid-column: 1 / -1; }
+}
+
+/* Job list */
+.jobs { list-style: none; margin: 0; padding: 0; }
+.job { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "head pay" "body pay"; gap: 0.25rem 1.5rem; padding-block: 1.15rem; border-bottom: 1px solid var(--rule); }
+.job .head { grid-area: head; min-width: 0; }
+.job .body { grid-area: body; min-width: 0; }
+.job .pay { grid-area: pay; }
+.job h2 { margin: 0; font-size: 1.0625rem; line-height: 1.3; font-weight: 600; text-wrap: pretty; }
+.job h2 a { color: var(--ink); text-decoration: none; }
+.job h2 a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.co { font-weight: 500; }
+.meta { color: var(--muted); font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 0.15rem 0.9rem; }
+.stack { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.35rem; }
+.stack span { font-size: 0.75rem; border: 1px solid var(--rule); border-radius: 4px; padding: 0.05rem 0.4rem; color: var(--muted); }
+.pay { text-align: right; display: grid; align-content: start; justify-items: end; gap: 0.2rem; }
+.pay .per { font-size: 0.8rem; color: var(--muted); }
+.pay .none { color: var(--muted); font-size: 0.875rem; }
+.go { font-size: 0.875rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.35rem; }
+.go svg { width: 0.85em; height: 0.85em; }
+.via { font-size: 0.75rem; color: var(--muted); }
+.via a { color: inherit; }
+@media (max-width: 600px) {
+  .job { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "pay" "body"; }
+  .pay { text-align: left; justify-items: start; grid-auto-flow: column; align-items: baseline; justify-content: start; gap: 0.5rem; }
+}
+.more { display: flex; justify-content: center; padding-block: 1.5rem; }
+button { font: inherit; font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 0.55rem 1.1rem; cursor: pointer; }
+button:hover { border-color: var(--muted); }
+.empty { padding-block: 3rem; text-align: left; }
+.empty p { margin: 0 0 0.75rem; }
+
+/* Featured jobs and the employer offer */
+.job.featured { background: var(--tint); margin-inline: -0.75rem; padding-inline: 0.75rem; border-radius: 6px; border-bottom-color: transparent; }
+.badge { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.02em; color: var(--mark-ink); background: var(--mark); border-radius: 3px; padding: 0.05rem 0.4rem; margin-left: 0.4rem; vertical-align: 0.15em; }
+.employer-link { font-size: var(--step--1); font-weight: 600; }
+.employers { padding-block: 2.5rem 1rem; display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; }
+.employers h2 { margin: 0 0 0.5rem; font-size: 1.5rem; letter-spacing: -0.015em; text-wrap: balance; }
+.employers p { margin: 0 0 0.75rem; max-width: 36rem; }
+.offer { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 1.25rem; display: grid; gap: 0.75rem; }
+.offer .price { font-family: var(--mono); font-size: 1.6rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.offer .price small { font-family: var(--sans); font-size: 0.875rem; font-weight: 400; color: var(--muted); }
+.offer ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.3rem; }
+.cta { display: inline-block; text-align: center; font-weight: 600; text-decoration: none; color: var(--mark-ink); background: var(--mark); border-radius: 6px; padding: 0.6rem 1rem; }
+.contact { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; font-size: 0.9375rem; }
+.contact code { font-family: var(--mono); font-size: 0.85rem; user-select: all; }
+.contact button { padding: 0.3rem 0.7rem; font-size: 0.8125rem; }
+@media (max-width: 760px) { .employers { grid-template-columns: minmax(0, 1fr); } }
+
+footer { border-top: 1px solid var(--rule); margin-top: 2rem; padding-block: 1.5rem 3rem; color: var(--muted); font-size: 0.875rem; }
+footer .wrap { display: grid; gap: 0.5rem; }
+footer p { margin: 0; max-width: 46rem; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+</head>
+<body>
+<header class="wrap top">
+  <a class="brand" href="#">Cleartext Jobs <span>/ IT, Europe</span></a>
+  <span class="updated"><span id="updated"></span> <a class="employer-link" href="#employers">Feature a job</a></span>
+</header>
+
+<section class="wrap hero" aria-labelledby="hero-title">
+  <h1 id="hero-title">IT jobs in Europe, with the salary in plain text.</h1>
+  <div class="decrypt" aria-live="off">
+    <div class="role" id="cipher-role"></div>
+    <div class="line"><span class="key">salary =</span> <mark class="sal" id="cipher"></mark></div>
+  </div>
+  <p class="lede" id="lede">Loading jobs…</p>
+</section>
+
+<section class="filters" aria-label="Filter jobs">
+  <div class="wrap">
+    <form id="f" role="search">
+      <label class="vh" for="q">Search</label>
+      <input id="q" type="search" placeholder="Search role, company or tech" autocomplete="off">
+      <label class="vh" for="family">Area</label>
+      <select id="family"><option value="">All areas</option></select>
+      <label class="vh" for="country">Country</label>
+      <select id="country"><option value="">All countries</option></select>
+      <label class="vh" for="workplace">Work model</label>
+      <select id="workplace"><option value="">Any work model</option><option>Remote</option><option>Hybrid</option><option>On-site</option></select>
+      <label class="vh" for="seniority">Level</label>
+      <select id="seniority"><option value="">Any level</option></select>
+      <div class="row2">
+        <label class="check" for="paid"><input id="paid" type="checkbox"> Only jobs with a published salary</label>
+        <span class="count" id="count" aria-live="polite"></span>
+        <label class="sort" for="sort">Sort
+          <select id="sort"><option value="salary">Salary shown first</option><option value="new">Newest</option></select>
+        </label>
+      </div>
+    </form>
+  </div>
+</section>
+
+<main class="wrap">
+  <ul class="jobs" id="list"></ul>
+  <div class="empty" id="empty" hidden>
+    <p>No jobs match these filters.</p>
+    <button type="button" id="clear">Clear filters</button>
+  </div>
+  <div class="more" id="more-wrap" hidden><button type="button" id="more">Show more jobs</button></div>
+</main>
+
+<section class="wrap employers" id="employers" aria-labelledby="emp-title">
+  <div>
+    <h2 id="emp-title">Hiring IT people in Europe?</h2>
+    <p>Put your role at the top of the list for 30 days. Candidates here are filtering for IT roles with a visible salary, so a featured job with a clear range gets seen first.</p>
+    <p>Your job is not listed yet? Send us the link to the posting and we add it and feature it at the same price.</p>
+  </div>
+  <div class="offer">
+    <div class="price" id="offer-price"></div>
+    <ul>
+      <li>Pinned at the top of the list and highlighted</li>
+      <li>Shown first in every search and filter it matches</li>
+      <li>Links straight to your own posting; applications go to you</li>
+      <li>The salary range must be shown, like every job here</li>
+    </ul>
+    <a class="cta" id="pay" href="#" target="_blank" rel="noopener" hidden>Pay and feature a job</a>
+    <div class="contact" id="contact"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Jobs are collected automatically, several times a day, from the public job boards of the companies that post them. Every listing links to the original posting, where you apply directly. Cleartext Jobs does not receive applications or store any personal data.</p>
+    <p>Salaries are shown as the company published them: gross, in the original currency and period. Some jobs come via <a href="https://www.arbeitnow.com" target="_blank" rel="noopener">Arbeitnow</a>.</p>
+    <p id="snapshot-note" hidden></p>
+  </div>
+</footer>
+
+<script>
+(async function () {
+  const $ = (id) => document.getElementById(id);
+  let data;
+  try {
+    data = window.CLEARTEXT_DATA || await (await fetch('jobs.json', { cache: 'no-cache' })).json();
+  } catch (e) {
+    $('lede').textContent = 'The job list could not be loaded. Refresh the page to try again.';
+    return;
+  }
+  const jobs = data.jobs || [];
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const site = Object.assign({ price: 49, currency: 'EUR', days: 30, contactEmail: '', paymentLink: '' }, data.site || {});
+  const PAGE = 40;
+  let shown = PAGE;
+
+  const fmtDate = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const nf = new Intl.NumberFormat('en-GB');
+  $('updated').textContent = data.updated ? `Updated ${fmtDate(data.updated)}` : '';
+  const total = data.total ?? jobs.length, withSal = data.withSalary ?? jobs.filter((j) => j.salary).length;
+  $('lede').innerHTML = `<strong>${nf.format(total)}</strong> open IT roles from <strong>${nf.format(data.companies ?? new Set(jobs.map((j) => j.company)).size)}</strong> companies, collected from their own job boards. <strong>${nf.format(withSal)}</strong> show the salary.`;
+  // Employer offer
+  $('offer-price').innerHTML = `${new Intl.NumberFormat('en-GB', { style: 'currency', currency: site.currency, maximumFractionDigits: 0 }).format(site.price)} <small>for ${site.days} days</small>`;
+  if (site.paymentLink) { $('pay').href = site.paymentLink; $('pay').hidden = false; }
+  if (site.contactEmail) {
+    $('contact').innerHTML = `<span>${site.paymentLink ? 'After paying, send the job link to' : 'Send the job link to'}</span> <code id="mail">${esc(site.contactEmail)}</code> <button type="button" id="copy">Copy email</button>`;
+    $('copy').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(site.contactEmail); $('copy').textContent = 'Copied'; }
+      catch (e) { const r = document.createRange(); r.selectNodeContents($('mail')); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+    });
+  } else {
+    $('contact').textContent = 'Contact details are being set up.';
+  }
+  if (data.snapshot) { $('snapshot-note').hidden = false; $('snapshot-note').textContent = data.snapshot; }
+
+  // Salary formatting
+  const sym = { EUR: '€', GBP: '£', CHF: 'CHF ', PLN: 'PLN ', SEK: 'SEK ', DKK: 'DKK ', NOK: 'NOK ', CZK: 'CZK ', HUF: 'HUF ', RON: 'RON ', BGN: 'BGN ' };
+  const per = { year: 'a year', month: 'a month', day: 'a day', hour: 'an hour' };
+  const money = (s) => {
+    const c = sym[s.currency] ?? s.currency + ' ';
+    return s.min === s.max ? `${c}${nf.format(s.min)}` : `${c}${nf.format(s.min)}–${nf.format(s.max)}`;
+  };
+  const ago = (iso) => {
+    if (!iso) return '';
+    const d = Math.floor((Date.now() - Date.parse(iso)) / 864e5);
+    return d <= 0 ? 'Posted today' : d === 1 ? 'Posted yesterday' : d < 60 ? `Posted ${d} days ago` : `Posted ${fmtDate(iso)}`;
+  };
+
+  // Filter options from the data
+  const uniq = (arr) => [...new Set(arr.filter(Boolean))];
+  const fill = (sel, values) => values.forEach((v) => { const o = document.createElement('option'); o.textContent = v; sel.appendChild(o); });
+  fill($('family'), uniq(jobs.map((j) => j.family)).sort());
+  const countryCounts = {};
+  jobs.forEach((j) => (j.countries.length ? j.countries : [j.region]).forEach((c) => c && (countryCounts[c] = (countryCounts[c] || 0) + 1)));
+  fill($('country'), Object.keys(countryCounts).sort());
+  const LEVELS = ['Intern / graduate', 'Junior', 'Mid', 'Senior', 'Lead / principal', 'Manager'];
+  fill($('seniority'), LEVELS.filter((l) => jobs.some((j) => j.seniority === l)));
+
+  // Remember the reader's filters on this device only.
+  const FIELDS = ['q', 'family', 'country', 'workplace', 'seniority', 'paid', 'sort'];
+  try {
+    const saved = JSON.parse(localStorage.getItem('cleartext-filters') || '{}');
+    FIELDS.forEach((k) => { if (saved[k] === undefined) return; const el = $(k); if (el.type === 'checkbox') el.checked = saved[k]; else if ([...(el.options || [])].some((o) => (o.value || o.textContent) === saved[k]) || el.tagName === 'INPUT') el.value = saved[k]; });
+  } catch (e) {}
+  const save = () => { try { localStorage.setItem('cleartext-filters', JSON.stringify(Object.fromEntries(FIELDS.map((k) => [k, $(k).type === 'checkbox' ? $(k).checked : $(k).value])))); } catch (e) {} };
+
+  const icon = '<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3H3v10h10v-3M9 3h4v4M13 3 7 9"/></svg>';
+  function row(j) {
+    const s = j.salary;
+    const pay = s
+      ? `<mark class="sal">${esc(money(s))}</mark><span class="per">${per[s.period] || ''}${s.note ? ', varies by location' : ''}</span>`
+      : `<span class="none">Salary not published</span>`;
+    const meta = [j.location, j.workplace, j.seniority, ago(j.posted)].filter(Boolean).map((m) => `<span>${esc(m)}</span>`).join('');
+    const stack = j.stack && j.stack.length ? `<div class="stack">${j.stack.map((t) => `<span>${esc(t)}</span>`).join('')}</div>` : '';
+    const via = j.source === 'arbeitnow' ? ` <span class="via">via <a href="https://www.arbeitnow.com" target="_blank" rel="noopener">Arbeitnow</a></span>` : '';
+    return `<li class="job${j.featured ? ' featured' : ''}">
+      <div class="head"><h2><a href="${esc(j.url)}" target="_blank" rel="noopener">${esc(j.title)}</a>${j.featured ? '<span class="badge">Featured</span>' : ''}</h2><div class="co">${esc(j.company)}</div></div>
+      <div class="pay">${pay}</div>
+      <div class="body"><div class="meta">${meta}</div>${stack}
+      <a class="go" href="${esc(j.url)}" target="_blank" rel="noopener">View original posting ${icon}</a>${via}</div>
+    </li>`;
+  }
+
+  function filtered() {
+    const q = $('q').value.trim().toLowerCase();
+    const terms = q ? q.split(/\s+/) : [];
+    const f = $('family').value, c = $('country').value, w = $('workplace').value, l = $('seniority').value, paid = $('paid').checked;
+    const out = jobs.filter((j) => {
+      if (f && j.family !== f) return false;
+      if (c && !(j.countries.includes(c) || j.region === c)) return false;
+      if (w && j.workplace !== w) return false;
+      if (l && j.seniority !== l) return false;
+      if (paid && !j.salary) return false;
+      if (terms.length) {
+        const hay = `${j.title} ${j.company} ${j.location} ${j.countries.join(' ')} ${(j.stack || []).join(' ')} ${j.family}`.toLowerCase();
+        if (!terms.every((t) => hay.includes(t))) return false;
+      }
+      return true;
+    });
+    const byDate = (a, b) => (b.posted || '').localeCompare(a.posted || '');
+    const feat = (a, b) => !!b.featured - !!a.featured;
+    return $('sort').value === 'new' ? out.sort((a, b) => feat(a, b) || byDate(a, b)) : out.sort((a, b) => feat(a, b) || (!!b.salary - !!a.salary) || byDate(a, b));
+  }
+
+  function render(reset) {
+    if (reset) shown = PAGE;
+    const list = filtered();
+    $('list').innerHTML = list.slice(0, shown).map(row).join('');
+    $('count').textContent = `${nf.format(list.length)} ${list.length === 1 ? 'job' : 'jobs'}`;
+    $('empty').hidden = list.length > 0;
+    $('more-wrap').hidden = list.length <= shown;
+    save();
+  }
+
+  $('f').addEventListener('submit', (e) => e.preventDefault());
+  let t;
+  $('q').addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => render(true), 150); });
+  ['family', 'country', 'workplace', 'seniority', 'paid', 'sort'].forEach((k) => $(k).addEventListener('change', () => render(true)));
+  $('more').addEventListener('click', () => { shown += PAGE; render(false); });
+  $('clear').addEventListener('click', () => { $('f').reset(); render(true); });
+  render(true);
+
+  // Hero: a real salary from today's list resolves out of scrambled characters.
+  const samples = jobs.filter((j) => j.salary && j.salary.period === 'year' && j.salary.currency === 'EUR').slice(0, 12);
+  const pool = samples.length ? samples : jobs.filter((j) => j.salary).slice(0, 12);
+  if (!pool.length) { document.querySelector('.decrypt').hidden = true; return; }
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const glyphs = '0123456789abcdef#%&*$@';
+  let i = 0;
+  function show(j, instant) {
+    $('cipher-role').textContent = `${j.title}, ${j.company}`;
+    const target = money(j.salary);
+    if (reduce || instant) { $('cipher').textContent = target; return; }
+    let frame = 0;
+    const total = 16;
+    const tick = () => {
+      frame++;
+      const revealed = Math.floor((frame / total) * target.length);
+      $('cipher').textContent = target.split('').map((ch, k) => k < revealed || ch === ' ' ? ch : glyphs[(Math.random() * glyphs.length) | 0]).join('');
+      if (frame < total) requestAnimationFrame(() => setTimeout(tick, 28));
+      else $('cipher').textContent = target;
+    };
+    tick();
+  }
+  show(pool[0], true);
+  if (!reduce && pool.length > 1) setInterval(() => { i = (i + 1) % pool.length; show(pool[i]); }, 7000);
+})();
+</script>
+<!--page-end-->
+<!-- Cloudflare Web Analytics (cookieless page-view counts) --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6a800cdc32cd47edb3f8e78ae11b47ec"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
