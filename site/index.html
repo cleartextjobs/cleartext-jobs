@@ -338,12 +338,12 @@ footer p { margin: 0; max-width: 46rem; }
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const glyphs = '0123456789abcdef#%&*$@';
   let i = 0;
-  function show(j) {
+  function show(j, instant) {
     $('cipher-role').textContent = `${j.title}, ${j.company}`;
     const target = money(j.salary);
-    if (reduce) { $('cipher').textContent = target; return; }
+    if (reduce || instant) { $('cipher').textContent = target; return; }
     let frame = 0;
-    const total = 22;
+    const total = 16;
     const tick = () => {
       frame++;
       const revealed = Math.floor((frame / total) * target.length);
@@ -353,10 +353,11 @@ footer p { margin: 0; max-width: 46rem; }
     };
     tick();
   }
-  show(pool[0]);
-  if (!reduce && pool.length > 1) setInterval(() => { i = (i + 1) % pool.length; show(pool[i]); }, 4500);
+  show(pool[0], true);
+  if (!reduce && pool.length > 1) setInterval(() => { i = (i + 1) % pool.length; show(pool[i]); }, 7000);
 })();
 </script>
 <!--page-end-->
+<!-- Cloudflare Web Analytics (cookieless page-view counts) --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6a800cdc32cd47edb3f8e78ae11b47ec"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
