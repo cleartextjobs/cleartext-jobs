@@ -96,7 +96,7 @@ ${stats.families.map((f) => `<tr><td>${esc(f.family)}</td><td class="num">${esc(
 <ul class="bars">${rows.map(([k, n]) => `<li><span>${esc(k)}</span><span class="n">${nf.format(n)}</span></li>`).join('')}</ul>
 </section>` : '';
 
-  const others = all.filter((o) => o.slug !== c.slug).map((o) => `<a href="/it-jobs/${esc(o.slug)}/">IT jobs in ${esc(o.label || o.name)}</a>`).join(' · ');
+  const others = all.filter((o) => o.slug !== c.slug).map((o) => `<a href="/it-jobs/${esc(o.slug)}/">${esc(o.name)}</a>`).join(' · ');
   const shown = list.slice(0, maxListed);
   const ld = {
     '@context': 'https://schema.org',
@@ -143,6 +143,8 @@ a { color: var(--link); }
 .hero { padding-block: 2.25rem 1.5rem; display: grid; gap: 1rem; }
 h1 { margin: 0; font-size: clamp(2rem, 1.3rem + 3.2vw, 3.2rem); line-height: 1.05; letter-spacing: -0.025em; max-width: 18ch; text-wrap: balance; }
 .lede { margin: 0; color: var(--muted); max-width: 44rem; }
+.by-country { font-size: 0.9375rem; color: var(--muted); }
+.by-country a { font-weight: 500; }
 .lede strong { color: var(--ink); font-variant-numeric: tabular-nums; }
 .cta { display: inline-block; justify-self: start; font-weight: 600; text-decoration: none; color: var(--mark-ink); background: var(--mark); border-radius: 6px; padding: 0.6rem 1rem; }
 mark.sal { background: linear-gradient(transparent 12%, var(--mark) 12%, var(--mark) 88%, transparent 88%); color: var(--mark-ink); padding: 0 0.25em; font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -196,6 +198,7 @@ footer p { margin: 0 0 0.5rem; max-width: 46rem; }
     ? `<strong>${nf.format(total)}</strong> open IT roles in ${esc(label)} from <strong>${nf.format(companies)}</strong> companies, collected from their own job boards. <strong>${nf.format(withSal)}</strong> (${pct(withSal, total)}%) show the salary. Updated ${esc(day)}.`
     : `No open IT roles in ${esc(label)} in today's collection. The list refreshes every 6 hours.`}</p>
 <a class="cta" href="${esc(filterLink)}">Search and filter jobs in ${esc(label)}</a>
+<nav class="by-country" aria-label="Other countries">Other countries: ${others}</nav>
 </section>
 ${total ? `<div class="wrap grid">${salaryBlock}${facts('Where the jobs are', cities, 'city-h')}${facts('Work model', models, 'model-h')}${facts('Areas', areas, 'area-h')}</div>` : ''}
 <section class="wrap" aria-labelledby="list-h">
@@ -205,7 +208,6 @@ ${shown.map(row).join('\n')}
 </ul>
 <div class="after">
 ${total > shown.length ? `<p><a class="cta" href="${esc(filterLink)}">See all ${nf.format(total)} jobs in ${esc(label)}</a></p>` : ''}
-<p>More countries: ${others}</p>
 </div>
 </section>
 </main>

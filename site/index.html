@@ -67,6 +67,8 @@ a { color: var(--link); }
 .decrypt .line { font-family: var(--mono); font-size: clamp(1rem, 0.8rem + 1.1vw, 1.45rem); }
 .decrypt .key { color: var(--muted); }
 .lede { margin: 0; color: var(--muted); max-width: 44rem; }
+.by-country { font-size: 0.9375rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+.by-country a { font-weight: 500; }
 .lede strong { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
 
 mark.sal { background: linear-gradient(transparent 12%, var(--mark) 12%, var(--mark) 88%, transparent 88%); color: var(--mark-ink); padding: 0 0.25em; font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
@@ -156,6 +158,7 @@ footer p { margin: 0; max-width: 46rem; }
     <div class="line"><span class="key">salary =</span> <mark class="sal" id="cipher"></mark></div>
   </div>
   <p class="lede" id="lede">Loading jobs…</p>
+  <nav class="by-country" aria-label="IT jobs by country">By country: <a href="/it-jobs/portugal/">Portugal</a> · <a href="/it-jobs/united-kingdom/">United Kingdom</a> · <a href="/it-jobs/germany/">Germany</a> · <a href="/it-jobs/spain/">Spain</a> · <a href="/it-jobs/france/">France</a> · <a href="/it-jobs/netherlands/">Netherlands</a></nav>
 </section>
 
 <section class="filters" aria-label="Filter jobs">
@@ -215,7 +218,6 @@ footer p { margin: 0; max-width: 46rem; }
     <p>Jobs are collected automatically, several times a day, from the public job boards of the companies that post them. Every listing links to the original posting, where you apply directly. Cleartext Jobs does not receive applications or store any personal data.</p>
     <p>Salaries are shown as the company published them: gross, in the original currency and period. Some jobs come via <a href="https://www.arbeitnow.com" target="_blank" rel="noopener">Arbeitnow</a>.</p>
     <p id="snapshot-note" hidden></p>
-    <p>IT jobs by country: <a href="/it-jobs/portugal/">Portugal</a> · <a href="/it-jobs/united-kingdom/">United Kingdom</a> · <a href="/it-jobs/germany/">Germany</a> · <a href="/it-jobs/spain/">Spain</a> · <a href="/it-jobs/france/">France</a> · <a href="/it-jobs/netherlands/">Netherlands</a></p>
     <p><a href="privacy.html">Privacy</a> · <a href="https://www.facebook.com/cleartextjobs" target="_blank" rel="noopener">Facebook</a></p>
   </div>
 </footer>
