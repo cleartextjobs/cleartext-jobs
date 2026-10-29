@@ -142,6 +142,10 @@ a { color: var(--link); }
 .brand { font-weight: 700; font-size: 1.25rem; color: var(--ink); text-decoration: none; }
 .brand span { font-family: var(--mono); font-weight: 400; font-size: 0.8em; color: var(--muted); }
 .crumbs { font-size: 0.8125rem; color: var(--muted); }
+.cta-sm { padding: 0.45rem 0.85rem; font-size: 0.9375rem; }
+.cta-sm .short { display: none; }
+.top { align-items: center; }
+@media (max-width: 600px) { .cta-sm .long { display: none; } .cta-sm .short { display: inline; } .cta-sm { font-size: 0.8125rem; padding: 0.4rem 0.6rem; } .brand span { display: none; } }
 .hero { padding-block: 1.5rem 1.5rem; display: grid; gap: 1rem; }
 h1 { margin: 0; font-size: clamp(2rem, 1.3rem + 3.2vw, 3.2rem); line-height: 1.05; letter-spacing: -0.025em; max-width: 18ch; text-wrap: balance; }
 .lede { margin: 0; color: var(--muted); max-width: 44rem; }
@@ -209,15 +213,15 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
 <body>
 <header class="topbar" id="topbar"><div class="wrap top">
 <a class="brand" href="/">Cleartext Jobs <span>/ IT, Europe</span></a>
-<nav class="crumbs" aria-label="Breadcrumb"><a href="/">All IT jobs in Europe</a> › ${esc(label)}</nav>
+<a class="cta cta-sm" href="${esc(filterLink)}"><span class="long">Search and filter jobs in ${esc(label)}</span><span class="short" aria-hidden="true">Filter jobs</span></a>
 </div></header>
 <main>
 <section class="wrap hero">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="/">All IT jobs in Europe</a> › ${esc(label)}</nav>
 <h1>IT jobs in ${esc(label)}, with the salary in plain text</h1>
 <p class="lede">${total
     ? `<strong>${nf.format(total)}</strong> open IT roles in ${esc(label)} from <strong>${nf.format(companies)}</strong> companies, collected from their own job boards. <strong>${nf.format(withSal)}</strong> (${pct(withSal, total)}%) show the salary. Updated ${esc(day)}.`
     : `No open IT roles in ${esc(label)} in today's collection. The list refreshes every 6 hours.`}</p>
-<a class="cta" href="${esc(filterLink)}">Search and filter jobs in ${esc(label)}</a>
 <nav class="by-country" aria-label="Other countries"><a href="/">All countries</a> · Other countries: ${others}</nav>
 </section>
 <section class="wrap list" aria-labelledby="list-h">
