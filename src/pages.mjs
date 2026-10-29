@@ -148,7 +148,11 @@ h1 { margin: 0; font-size: clamp(2rem, 1.3rem + 3.2vw, 3.2rem); line-height: 1.0
 .lede strong { color: var(--ink); font-variant-numeric: tabular-nums; }
 .cta { display: inline-block; justify-self: start; font-weight: 600; text-decoration: none; color: var(--mark-ink); background: var(--mark); border-radius: 6px; padding: 0.6rem 1rem; }
 mark.sal { background: linear-gradient(transparent 12%, var(--mark) 12%, var(--mark) 88%, transparent 88%); color: var(--mark-ink); padding: 0 0.25em; font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; }
-.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); align-items: start; padding-bottom: 1.5rem; }
+.layout { display: grid; grid-template-columns: 17rem minmax(0, 1fr); gap: 2rem; align-items: start; }
+.layout.single { grid-template-columns: minmax(0, 1fr); }
+.side { display: grid; gap: 1rem; padding-top: 1rem; }
+.list { min-width: 0; }
+@media (max-width: 860px) { .layout { grid-template-columns: minmax(0, 1fr); gap: 0.5rem; } }
 .panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem 1.15rem; }
 .panel h2 { margin: 0 0 0.6rem; font-size: 1rem; }
 .big { margin: 0; font-size: 1.4rem; }
@@ -161,7 +165,7 @@ td { border-bottom: 1px solid var(--rule); padding: 0.35rem 0; }
 .bars { list-style: none; margin: 0; padding: 0; font-size: 0.9rem; }
 .bars li { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--rule); padding: 0.3rem 0; }
 .bars .n { color: var(--muted); font-variant-numeric: tabular-nums; }
-.list-h { font-size: 1.35rem; margin: 1rem 0 0; letter-spacing: -0.01em; }
+.list-h { font-size: 1.35rem; margin: 0.9rem 0 0; letter-spacing: -0.01em; }
 .jobs { list-style: none; margin: 0; padding: 0; }
 .job { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "head pay" "body pay"; gap: 0.25rem 1.5rem; padding-block: 1.1rem; border-bottom: 1px solid var(--rule); }
 .job .head { grid-area: head; min-width: 0; } .job .body { grid-area: body; min-width: 0; } .job .pay { grid-area: pay; }
@@ -201,8 +205,9 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
 <a class="cta" href="${esc(filterLink)}">Search and filter jobs in ${esc(label)}</a>
 <nav class="by-country" aria-label="Other countries">Other countries: ${others}</nav>
 </section>
-${total ? `<div class="wrap grid">${salaryBlock}${facts('Where the jobs are', cities, 'city-h')}${facts('Work model', models, 'model-h')}${facts('Areas', areas, 'area-h')}</div>` : ''}
-<section class="wrap" aria-labelledby="list-h">
+<div class="wrap layout${total ? '' : ' single'}">
+${total ? `<aside class="side" aria-label="Summary for ${esc(label)}">${salaryBlock}${facts('Where the jobs are', cities, 'city-h')}${facts('Work model', models, 'model-h')}${facts('Areas', areas, 'area-h')}</aside>` : ''}
+<section class="list" aria-labelledby="list-h">
 <h2 class="list-h" id="list-h">${total > shown.length ? `${nf.format(shown.length)} of ${nf.format(total)} jobs, salary shown first` : 'Jobs, salary shown first'}</h2>
 <ul class="jobs">
 ${shown.map(row).join('\n')}
@@ -211,6 +216,7 @@ ${shown.map(row).join('\n')}
 ${total > shown.length ? `<p><a class="cta" href="${esc(filterLink)}">See all ${nf.format(total)} jobs in ${esc(label)}</a></p>` : ''}
 </div>
 </section>
+</div>
 </main>
 <footer>
 <div class="wrap">
