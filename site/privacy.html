@@ -8,16 +8,20 @@
   :root { --paper: #F1F4F8; --ink: #131B2A; --muted: #56617A; --link: #2747C9; }
   @media (prefers-color-scheme: dark) { :root { --paper: #0F141E; --ink: #E5E9F0; --muted: #9AA4B6; --link: #93AAFF; } }
   body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  main { max-width: 42rem; margin: 0 auto; padding: 3rem 16px 4rem; }
+  main { max-width: 42rem; margin: 0 auto; padding: 1.5rem 16px 4rem; }
   h1 { font-size: 2rem; line-height: 1.1; margin: 0 0 .5rem; }
   h2 { font-size: 1.1rem; margin: 2rem 0 .25rem; }
   p, li { color: var(--muted); }
   a { color: var(--link); }
+  .topbar { position: sticky; top: 0; z-index: 7; background: var(--paper); }
+  .top { max-width: 64rem; margin: 0 auto; padding: 0.85rem 16px; }
+  .brand { font-weight: 700; font-size: 1.25rem; color: var(--ink); text-decoration: none; }
+  .brand span { font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 400; font-size: 0.8em; color: var(--muted); }
 </style>
 </head>
 <body>
+<header class="topbar"><div class="top"><a class="brand" href="/">Cleartext Jobs <span>/ IT, Europe</span></a></div></header>
 <main>
-  <p><a href="./">← Cleartext Jobs</a></p>
   <h1>Privacy</h1>
   <p>Last updated: 28 October 2026</p>
 

@@ -137,11 +137,12 @@ body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(
 .wrap { max-width: 64rem; margin: 0 auto; padding-inline: 16px; }
 a { color: var(--link); }
 :focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 3px; }
-.top { padding-top: 1.25rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: baseline; }
+.topbar { position: sticky; top: 0; z-index: 7; background: var(--paper); }
+.top { padding-block: 0.85rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: baseline; }
 .brand { font-weight: 700; font-size: 1.25rem; color: var(--ink); text-decoration: none; }
 .brand span { font-family: var(--mono); font-weight: 400; font-size: 0.8em; color: var(--muted); }
 .crumbs { font-size: 0.8125rem; color: var(--muted); }
-.hero { padding-block: 2.25rem 1.5rem; display: grid; gap: 1rem; }
+.hero { padding-block: 1.5rem 1.5rem; display: grid; gap: 1rem; }
 h1 { margin: 0; font-size: clamp(2rem, 1.3rem + 3.2vw, 3.2rem); line-height: 1.05; letter-spacing: -0.025em; max-width: 18ch; text-wrap: balance; }
 .lede { margin: 0; color: var(--muted); max-width: 44rem; }
 .by-country { font-size: 0.9375rem; color: var(--muted); }
@@ -206,10 +207,10 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
 </style>
 </head>
 <body>
-<header class="wrap top">
+<header class="topbar" id="topbar"><div class="wrap top">
 <a class="brand" href="/">Cleartext Jobs <span>/ IT, Europe</span></a>
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">All IT jobs in Europe</a> › ${esc(label)}</nav>
-</header>
+</div></header>
 <main>
 <section class="wrap hero">
 <h1>IT jobs in ${esc(label)}, with the salary in plain text</h1>
@@ -258,7 +259,7 @@ ${employers(site)}
     document.getElementById('pinfo').textContent = 'Page ' + (page + 1) + ' of ' + pages;
     document.getElementById('prev').disabled = page === 0;
     document.getElementById('next').disabled = page >= pages - 1;
-    if (scroll) document.getElementById('list-h').scrollIntoView({ block: 'start' });
+    if (scroll) window.scrollTo({ top: Math.max(0, document.getElementById('list-h').getBoundingClientRect().top + window.scrollY - document.getElementById('topbar').offsetHeight - 8) });
   }
   per.addEventListener('change', function () { page = 0; show(false); });
   document.getElementById('prev').addEventListener('click', function () { page--; show(true); });
