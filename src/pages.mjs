@@ -148,11 +148,14 @@ h1 { margin: 0; font-size: clamp(2rem, 1.3rem + 3.2vw, 3.2rem); line-height: 1.0
 .lede strong { color: var(--ink); font-variant-numeric: tabular-nums; }
 .cta { display: inline-block; justify-self: start; font-weight: 600; text-decoration: none; color: var(--mark-ink); background: var(--mark); border-radius: 6px; padding: 0.6rem 1rem; }
 mark.sal { background: linear-gradient(transparent 12%, var(--mark) 12%, var(--mark) 88%, transparent 88%); color: var(--mark-ink); padding: 0 0.25em; font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; }
-.layout { display: grid; grid-template-columns: 17rem minmax(0, 1fr); gap: 2rem; align-items: start; }
-.layout.single { grid-template-columns: minmax(0, 1fr); }
-.side { display: grid; gap: 1rem; padding-top: 1rem; }
-.list { min-width: 0; }
-@media (max-width: 860px) { .layout { grid-template-columns: minmax(0, 1fr); gap: 0.5rem; } }
+.panels { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); align-items: start; padding-top: 0.9rem; }
+.summary { padding-bottom: 1rem; }
+.pager { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem 1rem; padding-block: 1.25rem; font-size: 0.9375rem; }
+.pager select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 0.3rem 0.4rem; }
+.pages { display: flex; align-items: center; gap: 0.75rem; }
+.pages span { color: var(--muted); font-variant-numeric: tabular-nums; }
+.pager button { font: inherit; font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 0.45rem 0.9rem; cursor: pointer; }
+.pager button:disabled { opacity: 0.4; cursor: default; }
 .panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem 1.15rem; }
 .panel h2 { margin: 0 0 0.6rem; font-size: 1rem; }
 .big { margin: 0; font-size: 1.4rem; }
@@ -180,8 +183,7 @@ td { border-bottom: 1px solid var(--rule); padding: 0.35rem 0; }
 .via { font-size: 0.75rem; color: var(--muted); } .via a { color: inherit; }
 .job.featured { background: var(--tint); margin-inline: -0.75rem; padding-inline: 0.75rem; border-radius: 6px; }
 .badge { font-size: 0.7rem; font-weight: 600; color: var(--mark-ink); background: var(--mark); border-radius: 3px; padding: 0.05rem 0.4rem; margin-left: 0.4rem; }
-.after { padding-block: 1.5rem; display: grid; gap: 0.75rem; }
-.after p { margin: 0; }
+.after { margin: 0; padding-block: 0.5rem 1.5rem; }
 footer { border-top: 1px solid var(--rule); margin-top: 1rem; padding-block: 1.5rem 3rem; color: var(--muted); font-size: 0.875rem; }
 footer p { margin: 0 0 0.5rem; max-width: 46rem; }
 footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--rule); }
@@ -205,18 +207,21 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
 <a class="cta" href="${esc(filterLink)}">Search and filter jobs in ${esc(label)}</a>
 <nav class="by-country" aria-label="Other countries">Other countries: ${others}</nav>
 </section>
-<div class="wrap layout${total ? '' : ' single'}">
-${total ? `<aside class="side" aria-label="Summary for ${esc(label)}">${salaryBlock}${facts('Where the jobs are', cities, 'city-h')}${facts('Work model', models, 'model-h')}${facts('Areas', areas, 'area-h')}</aside>` : ''}
-<section class="list" aria-labelledby="list-h">
+<section class="wrap list" aria-labelledby="list-h">
 <h2 class="list-h" id="list-h">${total > shown.length ? `${nf.format(shown.length)} of ${nf.format(total)} jobs, salary shown first` : 'Jobs, salary shown first'}</h2>
-<ul class="jobs">
+<ul class="jobs" id="jobs">
 ${shown.map(row).join('\n')}
 </ul>
-<div class="after">
-${total > shown.length ? `<p><a class="cta" href="${esc(filterLink)}">See all ${nf.format(total)} jobs in ${esc(label)}</a></p>` : ''}
-</div>
+${shown.length > 10 ? `<nav class="pager" id="pager" aria-label="Pages" hidden>
+<label class="per-page">Show <select id="per"><option>10</option><option>25</option><option>50</option><option value="0">All</option></select> per page</label>
+<div class="pages"><button type="button" id="prev">Previous</button><span id="pinfo" aria-live="polite"></span><button type="button" id="next">Next</button></div>
+</nav>` : ''}
+${total > shown.length ? `<p class="after"><a class="cta" href="${esc(filterLink)}">See all ${nf.format(total)} jobs in ${esc(label)}</a></p>` : ''}
 </section>
-</div>
+${total ? `<section class="wrap summary" aria-labelledby="sum-h">
+<h2 class="list-h" id="sum-h">IT jobs in ${esc(label)} in numbers</h2>
+<div class="panels">${salaryBlock}${facts('Where the jobs are', cities, 'city-h')}${facts('Work model', models, 'model-h')}${facts('Areas', areas, 'area-h')}</div>
+</section>` : ''}
 </main>
 <footer>
 <div class="wrap">
@@ -227,6 +232,28 @@ ${total > shown.length ? `<p><a class="cta" href="${esc(filterLink)}">See all ${
 <p class="legal"><a href="/privacy.html">Privacy policy</a></p>
 </div>
 </footer>
+<script>
+(function () {
+  var list = document.getElementById('jobs'), pager = document.getElementById('pager');
+  if (!list || !pager) return;
+  var rows = [].slice.call(list.children), per = document.getElementById('per'), page = 0;
+  function size() { return +per.value || rows.length; }
+  function show(scroll) {
+    var n = size(), pages = Math.max(1, Math.ceil(rows.length / n));
+    page = Math.min(page, pages - 1);
+    rows.forEach(function (r, i) { r.hidden = i < page * n || i >= (page + 1) * n; });
+    document.getElementById('pinfo').textContent = 'Page ' + (page + 1) + ' of ' + pages;
+    document.getElementById('prev').disabled = page === 0;
+    document.getElementById('next').disabled = page >= pages - 1;
+    if (scroll) document.getElementById('list-h').scrollIntoView({ block: 'start' });
+  }
+  per.addEventListener('change', function () { page = 0; show(false); });
+  document.getElementById('prev').addEventListener('click', function () { page--; show(true); });
+  document.getElementById('next').addEventListener('click', function () { page++; show(true); });
+  pager.hidden = false;
+  show(false);
+})();
+</script>
 <!-- Cloudflare Web Analytics (cookieless page-view counts) --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6a800cdc32cd47edb3f8e78ae11b47ec"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
