@@ -60,7 +60,7 @@ function row(j) {
 </li>`;
 }
 
-export function countryPage(c, jobs, { updated, all, maxListed = 150 }) {
+export function countryPage(c, jobs, { updated, all, maxListed = 150, site = {} }) {
   const label = c.label || c.name;
   const list = sortJobs(jobsIn(jobs, c.name));
   const total = list.length;
@@ -169,6 +169,17 @@ td { border-bottom: 1px solid var(--rule); padding: 0.35rem 0; }
 .bars { list-style: none; margin: 0; padding: 0; font-size: 0.9rem; }
 .bars li { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--rule); padding: 0.3rem 0; }
 .bars .n { color: var(--muted); font-variant-numeric: tabular-nums; }
+.employers { padding-block: 2rem 1rem; display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; border-top: 1px solid var(--rule); margin-top: 1rem; }
+.employers h2 { margin: 0 0 0.5rem; font-size: 1.5rem; letter-spacing: -0.015em; }
+.employers p { margin: 0 0 0.75rem; max-width: 36rem; }
+.offer { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 1.25rem; display: grid; gap: 0.75rem; }
+.offer .price { font-family: var(--mono); font-size: 1.6rem; font-weight: 600; }
+.offer .price small { font-family: var(--sans); font-size: 0.875rem; font-weight: 400; color: var(--muted); }
+.offer ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.3rem; }
+.offer .cta { justify-self: stretch; text-align: center; }
+.contact { font-size: 0.9375rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.contact code { font-family: var(--mono); font-size: 0.85rem; }
+@media (max-width: 760px) { .employers { grid-template-columns: minmax(0, 1fr); } }
 .list-h { font-size: 1.35rem; margin: 0.9rem 0 0; letter-spacing: -0.01em; }
 .jobs { list-style: none; margin: 0; padding: 0; }
 .job { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "head pay" "body pay"; gap: 0.25rem 1.5rem; padding-block: 1.1rem; border-bottom: 1px solid var(--rule); }
@@ -206,7 +217,7 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
     ? `<strong>${nf.format(total)}</strong> open IT roles in ${esc(label)} from <strong>${nf.format(companies)}</strong> companies, collected from their own job boards. <strong>${nf.format(withSal)}</strong> (${pct(withSal, total)}%) show the salary. Updated ${esc(day)}.`
     : `No open IT roles in ${esc(label)} in today's collection. The list refreshes every 6 hours.`}</p>
 <a class="cta" href="${esc(filterLink)}">Search and filter jobs in ${esc(label)}</a>
-<nav class="by-country" aria-label="Other countries">Other countries: ${others}</nav>
+<nav class="by-country" aria-label="Other countries"><a href="/">All countries</a> · Other countries: ${others}</nav>
 </section>
 <section class="wrap list" aria-labelledby="list-h">
 <h2 class="list-h" id="list-h">${nf.format(total)} ${total === 1 ? 'job' : 'jobs'}, salary shown first</h2>
@@ -223,12 +234,13 @@ ${total ? `<section class="wrap summary" aria-labelledby="sum-h">
 <h2 class="list-h" id="sum-h">IT jobs in ${esc(label)} in numbers</h2>
 <div class="panels">${salaryBlock}${facts('Where the jobs are', cities, 'city-h')}${facts('Work model', models, 'model-h')}${facts('Areas', areas, 'area-h')}</div>
 </section>` : ''}
+${employers(site)}
 </main>
 <footer>
 <div class="wrap">
 <p>Jobs are collected automatically, several times a day, from the public job boards of the companies that post them. Every listing links to the original posting, where you apply directly. Cleartext Jobs does not receive applications or store any personal data.</p>
 <p>Salaries are shown as the company published them: gross, in the original currency and period.</p>
-<p><a href="/">All IT jobs in Europe</a> · <a href="/#employers">Feature a job</a></p>
+<p><a href="/">All IT jobs in Europe</a> · <a href="#employers">Feature a job</a></p>
 <p>Follow Cleartext Jobs: <a href="https://www.facebook.com/cleartextjobs" target="_blank" rel="noopener">Facebook</a> · <a href="https://www.instagram.com/cleartextjobs/" target="_blank" rel="noopener">Instagram</a></p>
 <p class="legal"><a href="/privacy.html">Privacy policy</a></p>
 </div>
@@ -261,11 +273,38 @@ ${total ? `<section class="wrap summary" aria-labelledby="sum-h">
 `;
 }
 
+// "Hiring IT people in Europe?" offer, same as the home page (price and contact from config/site.json).
+function employers(site) {
+  const st = { price: 49, currency: 'EUR', days: 30, contactEmail: '', paymentLink: '', ...site };
+  const price = new Intl.NumberFormat('en-GB', { style: 'currency', currency: st.currency, maximumFractionDigits: 0 }).format(st.price);
+  const contact = st.contactEmail
+    ? `<div class="contact"><span>${st.paymentLink ? 'After paying, send the job link to' : 'Send the job link to'}</span> <a href="mailto:${esc(st.contactEmail)}"><code>${esc(st.contactEmail)}</code></a></div>`
+    : '<div class="contact">Contact details are being set up.</div>';
+  return `<section class="wrap employers" id="employers" aria-labelledby="emp-title">
+<div>
+<h2 id="emp-title">Hiring IT people in Europe?</h2>
+<p>Put your role at the top of the list for ${st.days} days. Candidates here are filtering for IT roles with a visible salary, so a featured job with a clear range gets seen first.</p>
+<p>Your job is not listed yet? Send us the link to the posting and we add it and feature it at the same price.</p>
+</div>
+<div class="offer">
+<div class="price">${esc(price)} <small>for ${st.days} days</small></div>
+<ul>
+<li>Pinned at the top of the list and highlighted</li>
+<li>Shown first in every search and filter it matches</li>
+<li>Links straight to your own posting; applications go to you</li>
+<li>The salary range must be shown, like every job here</li>
+</ul>
+${st.paymentLink ? `<a class="cta" href="${esc(st.paymentLink)}" target="_blank" rel="noopener">Pay and feature a job</a>` : ''}
+${contact}
+</div>
+</section>`;
+}
+
 // Returns [{ path: 'it-jobs/<slug>/index.html', url, html, total }] for every configured country.
-export function buildCountryPages(jobs, { updated, config = {} }) {
+export function buildCountryPages(jobs, { updated, config = {}, site = {} }) {
   const all = config.countries || [];
   return all.map((c) => {
-    const html = countryPage(c, jobs, { updated, all, maxListed: config.maxListed || 600 });
+    const html = countryPage(c, jobs, { updated, all, maxListed: config.maxListed || 600, site });
     return { path: `it-jobs/${c.slug}/index.html`, url: `${BASE}/it-jobs/${c.slug}/`, html, total: jobsIn(jobs, c.name).length };
   });
 }

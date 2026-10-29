@@ -113,7 +113,7 @@ await mkdir(new URL('site/', ROOT), { recursive: true });
 const { _notes, ...siteSettings } = site;
 await writeFile(new URL('site/jobs.json', ROOT), JSON.stringify({ ...summary, site: siteSettings, jobs }));
 // Country pages for search engines (config/pages.json).
-const pages = buildCountryPages(jobs, { updated: summary.updated, config: pagesConfig });
+const pages = buildCountryPages(jobs, { updated: summary.updated, config: pagesConfig, site: siteSettings });
 for (const p of pages) {
   await mkdir(new URL(`site/${p.path.replace(/[^/]+$/, '')}`, ROOT), { recursive: true });
   await writeFile(new URL(`site/${p.path}`, ROOT), p.html);
