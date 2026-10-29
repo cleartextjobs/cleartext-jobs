@@ -361,7 +361,10 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
   let t;
   $('q').addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => render(true), 150); });
   ['family', 'country', 'workplace', 'seniority', 'paid', 'sort', 'per'].forEach((k) => $(k).addEventListener('change', () => render(true)));
-  const go = (d) => { page += d; render(false); document.querySelector('.filters').scrollIntoView({ block: 'start' }); };
+  const go = (d) => { page += d; render(false); // The filter bar is sticky on wide screens, so scroll to the list top minus its height.
+    const bar = document.querySelector('.filters');
+    const offset = getComputedStyle(bar).position === 'sticky' ? bar.offsetHeight + 8 : 8;
+    window.scrollTo({ top: Math.max(0, $('list').getBoundingClientRect().top + window.scrollY - offset) }); };
   $('prev').addEventListener('click', () => go(-1));
   $('next').addEventListener('click', () => go(1));
   $('clear').addEventListener('click', () => { $('f').reset(); render(true); });
