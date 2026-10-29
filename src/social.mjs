@@ -1,5 +1,6 @@
 // Picks 5 recent IT jobs with a published salary from site/jobs.json and posts them to the
-// Cleartext Jobs Facebook Page. Runs from .github/workflows/social.yml (Mon, Wed, Fri).
+// Cleartext Jobs Facebook Page. Runs from .github/workflows/social.yml (manual) and
+// .github/workflows/social-pack.yml (Sunday: the three posts of the week, to schedule by hand).
 //
 //   node src/social.mjs            -> posts (needs FB_PAGE_ID and FB_PAGE_TOKEN)
 //   node src/social.mjs --dry-run  -> prints the post, posts nothing
@@ -204,8 +205,14 @@ async function main() {
   if (process.argv.includes('--plan')) {
     const data = JSON.parse(await readFile(new URL('../site/jobs.json', import.meta.url), 'utf8'));
     const weekday = Number(process.env.WEEKDAY || new Date().getUTCDay());
-    const picked = pick(data.jobs, weekday);
+    // USED_FILE (optional): jobs already chosen for another post this week are skipped.
+    const usedFile = process.env.USED_FILE;
+    const key = (j) => `${j.company}|${j.title.toLowerCase()}`;
+    let used = [];
+    if (usedFile) { try { used = JSON.parse(await readFile(usedFile, 'utf8')); } catch { used = []; } }
+    const picked = pick(data.jobs.filter((j) => !used.includes(key(j))), weekday);
     await mkdir(out, { recursive: true });
+    if (picked && usedFile) await writeFile(usedFile, JSON.stringify([...used, ...picked.jobs.map(key)]));
     if (!picked) { console.log(`Nothing to post for weekday ${weekday}.`); await writeFile(new URL('plan.json', out), 'null'); return; }
     const stamp = new Date().toISOString().slice(0, 10);
     const html = slides(picked, { total: data.total });

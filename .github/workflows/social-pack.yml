@@ -1,0 +1,50 @@
+name: Prepare the week's social posts
+
+# Every Sunday: makes the Monday (Portugal), Wednesday (remote Europe) and Friday
+# (Portugal and Spain) posts, with no job repeated, to schedule in Meta Business Suite.
+# Download: Actions -> this run -> Artifacts -> "publicacoes-semana".
+on:
+  schedule:
+    - cron: "43 17 * * 0"   # Sunday, 17:43 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check the rules
+        run: node test/run.mjs && node test/social.mjs
+      - name: Collect jobs
+        run: node src/collect.mjs
+      - name: Install Chromium
+        run: npm install --no-save playwright && npx playwright install --with-deps chromium
+      - name: Make the three posts
+        env:
+          USED_FILE: ${{ runner.temp }}/used.json
+        run: |
+          for day in 1:1-segunda 3:2-quarta 5:3-sexta; do
+            weekday=${day%%:*}; folder=publicacoes/${day#*:}
+            rm -rf social-out site/social
+            WEEKDAY=$weekday node src/social.mjs --plan
+            mkdir -p "$folder"
+            if [ "$(cat social-out/plan.json)" = "null" ]; then
+              echo "Sem vagas suficientes para este dia." > "$folder/sem-publicacao.txt"
+              continue
+            fi
+            node src/render.mjs
+            node -e 'const p=require("./social-out/plan.json"),f=require("fs"),d=process.argv[1];f.writeFileSync(d+"/facebook.txt",p.facebook);f.writeFileSync(d+"/instagram.txt",p.instagram)' "$folder"
+            cp site/social/*/*.jpg "$folder/"
+          done
+          ls -R publicacoes
+      - uses: actions/upload-artifact@v4
+        with:
+          name: publicacoes-semana
+          path: publicacoes/
+          retention-days: 14
