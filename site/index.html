@@ -115,7 +115,11 @@ input[type=search], select { font: inherit; font-size: 0.9375rem; color: var(--i
   .job { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "pay" "body"; }
   .pay { text-align: left; justify-items: start; grid-auto-flow: column; align-items: baseline; justify-content: start; gap: 0.5rem; }
 }
-.more { display: flex; justify-content: center; padding-block: 1.5rem; }
+.pager { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem 1rem; padding-block: 1.25rem; font-size: 0.9375rem; }
+.pager select { width: auto; padding-block: 0.3rem; }
+.pages { display: flex; align-items: center; gap: 0.75rem; }
+.pages span { color: var(--muted); font-variant-numeric: tabular-nums; }
+button:disabled { opacity: 0.4; cursor: default; }
 button { font: inherit; font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 0.55rem 1.1rem; cursor: pointer; }
 button:hover { border-color: var(--muted); }
 .empty { padding-block: 3rem; text-align: left; }
@@ -192,7 +196,10 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
     <p>No jobs match these filters.</p>
     <button type="button" id="clear">Clear filters</button>
   </div>
-  <div class="more" id="more-wrap" hidden><button type="button" id="more">Show more jobs</button></div>
+  <nav class="pager" id="pager" aria-label="Pages" hidden>
+    <label class="per-page" for="per">Show <select id="per"><option>10</option><option>25</option><option>50</option><option>100</option></select> per page</label>
+    <div class="pages"><button type="button" id="prev">Previous</button><span id="pinfo" aria-live="polite"></span><button type="button" id="next">Next</button></div>
+  </nav>
 </main>
 
 <section class="wrap employers" id="employers" aria-labelledby="emp-title">
@@ -237,8 +244,7 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
   const jobs = data.jobs || [];
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const site = Object.assign({ price: 49, currency: 'EUR', days: 30, contactEmail: '', paymentLink: '' }, data.site || {});
-  const PAGE = 40;
-  let shown = PAGE;
+  let page = 0;
 
   const fmtDate = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   const nf = new Intl.NumberFormat('en-GB');
@@ -283,7 +289,7 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
   fill($('seniority'), LEVELS.filter((l) => jobs.some((j) => j.seniority === l)));
 
   // Remember the reader's filters on this device only.
-  const FIELDS = ['q', 'family', 'country', 'workplace', 'seniority', 'paid', 'sort'];
+  const FIELDS = ['q', 'family', 'country', 'workplace', 'seniority', 'paid', 'sort', 'per'];
   try {
     const saved = JSON.parse(localStorage.getItem('cleartext-filters') || '{}');
     FIELDS.forEach((k) => { if (saved[k] === undefined) return; const el = $(k); if (el.type === 'checkbox') el.checked = saved[k]; else if ([...(el.options || [])].some((o) => (o.value || o.textContent) === saved[k]) || el.tagName === 'INPUT') el.value = saved[k]; });
@@ -337,20 +343,27 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
   }
 
   function render(reset) {
-    if (reset) shown = PAGE;
+    if (reset) page = 0;
     const list = filtered();
-    $('list').innerHTML = list.slice(0, shown).map(row).join('');
+    const per = +$('per').value || 10, pages = Math.max(1, Math.ceil(list.length / per));
+    page = Math.min(Math.max(page, 0), pages - 1);
+    $('list').innerHTML = list.slice(page * per, (page + 1) * per).map(row).join('');
+    $('pinfo').textContent = `Page ${page + 1} of ${nf.format(pages)}`;
+    $('prev').disabled = page === 0;
+    $('next').disabled = page >= pages - 1;
     $('count').textContent = `${nf.format(list.length)} ${list.length === 1 ? 'job' : 'jobs'}`;
     $('empty').hidden = list.length > 0;
-    $('more-wrap').hidden = list.length <= shown;
+    $('pager').hidden = list.length <= 10;
     save();
   }
 
   $('f').addEventListener('submit', (e) => e.preventDefault());
   let t;
   $('q').addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => render(true), 150); });
-  ['family', 'country', 'workplace', 'seniority', 'paid', 'sort'].forEach((k) => $(k).addEventListener('change', () => render(true)));
-  $('more').addEventListener('click', () => { shown += PAGE; render(false); });
+  ['family', 'country', 'workplace', 'seniority', 'paid', 'sort', 'per'].forEach((k) => $(k).addEventListener('change', () => render(true)));
+  const go = (d) => { page += d; render(false); document.querySelector('.filters').scrollIntoView({ block: 'start' }); };
+  $('prev').addEventListener('click', () => go(-1));
+  $('next').addEventListener('click', () => go(1));
   $('clear').addEventListener('click', () => { $('f').reset(); render(true); });
   render(true);
 
