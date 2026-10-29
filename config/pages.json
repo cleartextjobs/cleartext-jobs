@@ -1,6 +1,7 @@
 {
   "_notes": "Country landing pages for search engines, built on every collection run at /it-jobs/<slug>/. To add a country, add a line with its name exactly as the site shows it in the Country filter (e.g. Portugal) and a slug for the address. currency: the local currency used for the salary summary.",
   "countries": [
+    { "name": "Portugal", "slug": "portugal", "currency": "EUR" },
     { "name": "United Kingdom", "slug": "united-kingdom", "currency": "GBP", "label": "the UK" },
     { "name": "Germany", "slug": "germany", "currency": "EUR" },
     { "name": "Spain", "slug": "spain", "currency": "EUR" },
