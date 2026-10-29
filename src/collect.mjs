@@ -1,6 +1,7 @@
 // Collects IT jobs in Europe from public company job boards and writes site/jobs.json.
 // Run: node src/collect.mjs   (Node 20+, no dependencies)
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { buildCountryPages } from './pages.mjs';
 import { fromGreenhouse, fromLever, fromAshby, fromArbeitnow, fromSmartRecruiters, fromRecruitee, finalize, dedupe, applyFeatured } from './normalize.mjs';
 
 const ROOT = new URL('..', import.meta.url);
@@ -8,6 +9,7 @@ const config = JSON.parse(await readFile(new URL('config/sources.json', ROOT), '
 const readOptional = async (path, fallback) => { try { return JSON.parse(await readFile(new URL(path, ROOT), 'utf8')); } catch { return fallback; } };
 const site = await readOptional('config/site.json', {});
 const featured = await readOptional('config/featured.json', {});
+const pagesConfig = await readOptional('config/pages.json', {});
 const UA = 'CleartextJobsBot/0.1 (+https://cleartextjobs.com)';
 const report = { ok: [], failed: [] };
 const names = config.names || {};
@@ -110,14 +112,25 @@ const summary = {
 await mkdir(new URL('site/', ROOT), { recursive: true });
 const { _notes, ...siteSettings } = site;
 await writeFile(new URL('site/jobs.json', ROOT), JSON.stringify({ ...summary, site: siteSettings, jobs }));
-// Sitemap for search engines; lastmod tells them the list changes several times a day.
+// Country pages for search engines (config/pages.json).
+const pages = buildCountryPages(jobs, { updated: summary.updated, config: pagesConfig });
+for (const p of pages) {
+  await mkdir(new URL(`site/${p.path.replace(/[^/]+$/, '')}`, ROOT), { recursive: true });
+  await writeFile(new URL(`site/${p.path}`, ROOT), p.html);
+}
+// Sitemap for search engines; lastmod tells them the lists change several times a day.
 const day = summary.updated.slice(0, 10);
+const urls = [
+  `  <url><loc>https://cleartextjobs.com/</loc><lastmod>${day}</lastmod><changefreq>daily</changefreq></url>`,
+  ...pages.filter((p) => p.total).map((p) => `  <url><loc>${p.url}</loc><lastmod>${day}</lastmod><changefreq>daily</changefreq></url>`),
+  '  <url><loc>https://cleartextjobs.com/privacy.html</loc><lastmod>2026-10-28</lastmod><changefreq>yearly</changefreq></url>',
+];
 await writeFile(new URL('site/sitemap.xml', ROOT), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://cleartextjobs.com/</loc><lastmod>${day}</lastmod><changefreq>daily</changefreq></url>
-  <url><loc>https://cleartextjobs.com/privacy.html</loc><lastmod>2026-10-28</lastmod><changefreq>yearly</changefreq></url>
+${urls.join('\n')}
 </urlset>
 `);
+if (pages.length) console.log('Country pages: ' + pages.map((p) => `${p.path.split('/')[1]} ${p.total}`).join(', '));
 
 console.log(`Collected ${raw.length} postings → kept ${jobs.length} IT jobs in Europe (${summary.withSalary} with salary) from ${summary.companies} companies.`);
 if (report.failed.length) console.log(`Skipped sources (${report.failed.length}):\n  ` + report.failed.join('\n  '));

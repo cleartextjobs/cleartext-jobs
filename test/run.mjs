@@ -149,3 +149,23 @@ t('paid features', () => {
   assert.equal(out.find((j) => j.url === 'a').featured, undefined);
 });
 console.log('feature checks passed');
+{
+  const { buildCountryPages, salaryStats, topCities } = await import('../src/pages.mjs');
+  const mk = (i, o) => ({ title: `Backend Engineer ${i}`, company: `Co ${i % 3}`, url: `https://x.test/${i}`, source: 'company', family: 'Software development', seniority: 'Senior', workplace: 'Hybrid', countries: ['Germany'], region: '', location: i % 2 ? 'Berlin, Germany' : 'Munich', salary: null, stack: ['Go'], posted: '2026-10-20', ...o });
+  const jobs = [
+    ...Array.from({ length: 6 }, (_, i) => mk(i, { salary: { min: 60000 + i * 1000, max: 80000 + i * 1000, currency: 'EUR', period: 'year' } })),
+    mk(9, { title: 'Ops <script>', countries: ['Germany', 'Spain'], location: 'Germany, Spain' }),
+    mk(10, { countries: ['Spain'], location: 'Madrid' }),
+  ];
+  const s = salaryStats(jobs.filter((j) => j.countries.includes('Germany')), 'EUR');
+  assert.equal(s.n, 6); assert.equal(s.median, 73000); assert.equal(s.families[0].n, 6);
+  assert.deepEqual(Object.fromEntries(topCities(jobs.filter((j) => j.countries.includes('Germany')), 'Germany')), { Berlin: 3, Munich: 3 });
+  const config = { countries: [{ name: 'Germany', slug: 'germany', currency: 'EUR' }, { name: 'France', slug: 'france', currency: 'EUR' }] };
+  const [de, fr] = buildCountryPages(jobs, { updated: '2026-10-29T10:00:00Z', config });
+  assert.equal(de.path, 'it-jobs/germany/index.html'); assert.equal(de.total, 7);
+  assert.ok(de.html.includes('<link rel="canonical" href="https://cleartextjobs.com/it-jobs/germany/">'));
+  assert.ok(de.html.includes('Ops &lt;script&gt;') && !de.html.includes('Ops <script>'));
+  assert.ok(de.html.includes('€73,000') && de.html.includes('/?country=Germany') && de.html.includes('/it-jobs/france/'));
+  assert.equal(fr.total, 0); assert.ok(fr.html.includes('No open IT roles'));
+  console.log('country page checks passed');
+}

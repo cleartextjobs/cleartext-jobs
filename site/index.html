@@ -215,6 +215,7 @@ footer p { margin: 0; max-width: 46rem; }
     <p>Jobs are collected automatically, several times a day, from the public job boards of the companies that post them. Every listing links to the original posting, where you apply directly. Cleartext Jobs does not receive applications or store any personal data.</p>
     <p>Salaries are shown as the company published them: gross, in the original currency and period. Some jobs come via <a href="https://www.arbeitnow.com" target="_blank" rel="noopener">Arbeitnow</a>.</p>
     <p id="snapshot-note" hidden></p>
+    <p>IT jobs by country: <a href="/it-jobs/united-kingdom/">United Kingdom</a> · <a href="/it-jobs/germany/">Germany</a> · <a href="/it-jobs/spain/">Spain</a> · <a href="/it-jobs/france/">France</a> · <a href="/it-jobs/netherlands/">Netherlands</a></p>
     <p><a href="privacy.html">Privacy</a> · <a href="https://www.facebook.com/cleartextjobs" target="_blank" rel="noopener">Facebook</a></p>
   </div>
 </footer>
@@ -282,6 +283,14 @@ footer p { margin: 0; max-width: 46rem; }
   try {
     const saved = JSON.parse(localStorage.getItem('cleartext-filters') || '{}');
     FIELDS.forEach((k) => { if (saved[k] === undefined) return; const el = $(k); if (el.type === 'checkbox') el.checked = saved[k]; else if ([...(el.options || [])].some((o) => (o.value || o.textContent) === saved[k]) || el.tagName === 'INPUT') el.value = saved[k]; });
+  } catch (e) {}
+  // Links such as /?country=Germany (from the country pages) open the list already filtered.
+  try {
+    const params = new URLSearchParams(location.search);
+    if ([...params.keys()].some((k) => FIELDS.includes(k))) {
+      $('f').reset();
+      FIELDS.forEach((k) => { if (!params.has(k)) return; const el = $(k), v = params.get(k); if (el.type === 'checkbox') el.checked = v === '1' || v === 'true'; else if (el.tagName === 'INPUT' || [...el.options].some((o) => (o.value || o.textContent) === v)) el.value = v; });
+    }
   } catch (e) {}
   const save = () => { try { localStorage.setItem('cleartext-filters', JSON.stringify(Object.fromEntries(FIELDS.map((k) => [k, $(k).type === 'checkbox' ? $(k).checked : $(k).value])))); } catch (e) {} };
 
