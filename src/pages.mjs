@@ -180,6 +180,7 @@ td { border-bottom: 1px solid var(--rule); padding: 0.35rem 0; }
 .after p { margin: 0; }
 footer { border-top: 1px solid var(--rule); margin-top: 1rem; padding-block: 1.5rem 3rem; color: var(--muted); font-size: 0.875rem; }
 footer p { margin: 0 0 0.5rem; max-width: 46rem; }
+footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--rule); }
 @media (max-width: 600px) {
   .job { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "pay" "body"; }
   .pay { text-align: left; justify-items: start; grid-auto-flow: column; justify-content: start; align-items: baseline; gap: 0.5rem; }
@@ -215,7 +216,9 @@ ${total > shown.length ? `<p><a class="cta" href="${esc(filterLink)}">See all ${
 <div class="wrap">
 <p>Jobs are collected automatically, several times a day, from the public job boards of the companies that post them. Every listing links to the original posting, where you apply directly. Cleartext Jobs does not receive applications or store any personal data.</p>
 <p>Salaries are shown as the company published them: gross, in the original currency and period.</p>
-<p><a href="/">All IT jobs in Europe</a> · <a href="/#employers">Feature a job</a> · <a href="/privacy.html">Privacy</a></p>
+<p><a href="/">All IT jobs in Europe</a> · <a href="/#employers">Feature a job</a></p>
+<p>Follow Cleartext Jobs: <a href="https://www.facebook.com/cleartextjobs" target="_blank" rel="noopener">Facebook</a> · <a href="https://www.instagram.com/cleartextjobs/" target="_blank" rel="noopener">Instagram</a></p>
+<p class="legal"><a href="/privacy.html">Privacy policy</a></p>
 </div>
 </footer>
 <!-- Cloudflare Web Analytics (cookieless page-view counts) --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6a800cdc32cd47edb3f8e78ae11b47ec"}'></script><!-- End Cloudflare Web Analytics -->
