@@ -110,6 +110,14 @@ const summary = {
 await mkdir(new URL('site/', ROOT), { recursive: true });
 const { _notes, ...siteSettings } = site;
 await writeFile(new URL('site/jobs.json', ROOT), JSON.stringify({ ...summary, site: siteSettings, jobs }));
+// Sitemap for search engines; lastmod tells them the list changes several times a day.
+const day = summary.updated.slice(0, 10);
+await writeFile(new URL('site/sitemap.xml', ROOT), `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://cleartextjobs.com/</loc><lastmod>${day}</lastmod><changefreq>daily</changefreq></url>
+  <url><loc>https://cleartextjobs.com/privacy.html</loc><lastmod>2026-10-28</lastmod><changefreq>yearly</changefreq></url>
+</urlset>
+`);
 
 console.log(`Collected ${raw.length} postings → kept ${jobs.length} IT jobs in Europe (${summary.withSalary} with salary) from ${summary.companies} companies.`);
 if (report.failed.length) console.log(`Skipped sources (${report.failed.length}):\n  ` + report.failed.join('\n  '));

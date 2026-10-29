@@ -65,3 +65,15 @@ npx serve site           # abre o site em http://localhost:3000
 - A classificação de funções é feita por palavras no título. Algumas vagas podem ficar na área errada ou escapar.
 - No teste de 27/10/2026: 2.290 vagas de IT, 370 empresas, cerca de 17% com salário publicado; 227 em Portugal e 300 em Espanha.
 - LinkedIn, Indeed, ITJobs e outros sites de emprego não são usados, porque os termos proíbem a recolha automática. Remotive também não, porque não permite colocar as vagas noutros sites de emprego.
+
+## Publicação automática no Facebook e no Instagram
+
+`.github/workflows/social.yml` publica às segundas (vagas em Portugal), quartas (remotas na Europa) e sextas (Portugal e Espanha), às 08:43 UTC. Escolhe 5 vagas recentes com salário, uma por empresa (`src/social.mjs`):
+
+- **Facebook:** texto com as 5 vagas e link para cleartextjobs.com.
+- **Instagram:** carrossel de 7 imagens (capa, 5 vagas, fecho) gerado por `src/render.mjs` e publicado no site em `social/<data>/` para o Instagram o ir buscar; a legenda remete para o link na bio.
+- O Instagram tem de estar ligado à Página do Facebook (já está: @cleartextjobs).
+- Precisa de dois segredos no repositório (**Settings → Secrets and variables → Actions**): `FB_PAGE_ID` e `FB_PAGE_TOKEN` (chave da Página, de uma app da Meta em modo Live, com as autorizações `pages_manage_posts`, `pages_read_engagement`, `pages_show_list`, `instagram_basic` e `instagram_content_publish`).
+- Para testar: **Actions → Post jobs to Facebook and Instagram → Run workflow**, com `dry_run = true` (cria o texto e as imagens, que ficam para descarregar em *Artifacts*, sem publicar) ou `false` (publica).
+- Se a chave deixar de funcionar (por exemplo, depois de mudar a palavra-passe do Facebook), a execução falha e mostra o erro da Meta; é preciso gerar uma chave nova.
+- Letras: Instrument Sans e Martian Mono, licença SIL Open Font License (ficheiros em `assets/fonts`).
