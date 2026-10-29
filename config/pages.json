@@ -8,5 +8,5 @@
     { "name": "France", "slug": "france", "currency": "EUR" },
     { "name": "Netherlands", "slug": "netherlands", "currency": "EUR", "label": "the Netherlands" }
   ],
-  "maxListed": 150
+  "maxListed": 600
 }

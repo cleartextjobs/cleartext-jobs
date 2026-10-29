@@ -132,6 +132,7 @@ ${stats.families.map((f) => `<tr><td>${esc(f.family)}</td><td class="num">${esc(
 :root { --paper: #F1F4F8; --surface: #FFFFFF; --ink: #131B2A; --muted: #56617A; --rule: #D5DCE6; --mark: #FFE45C; --mark-ink: #191708; --link: #2145C4; --tint: #FFF8D1;
   --sans: "Instrument Sans", "Segoe UI", system-ui, -apple-system, sans-serif; --mono: "Martian Mono", ui-monospace, Menlo, Consolas, monospace; }
 @media (prefers-color-scheme: dark) { :root { --paper: #0F141E; --surface: #161D2A; --ink: #E5E9F0; --muted: #9AA4B6; --rule: #283245; --mark: #E7CC38; --mark-ink: #15130A; --link: #93AAFF; --tint: #2A2614; color-scheme: dark; } }
+[hidden] { display: none !important; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.5; }
 .wrap { max-width: 64rem; margin: 0 auto; padding-inline: 16px; }
 a { color: var(--link); }
@@ -208,7 +209,7 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
 <nav class="by-country" aria-label="Other countries">Other countries: ${others}</nav>
 </section>
 <section class="wrap list" aria-labelledby="list-h">
-<h2 class="list-h" id="list-h">${total > shown.length ? `${nf.format(shown.length)} of ${nf.format(total)} jobs, salary shown first` : 'Jobs, salary shown first'}</h2>
+<h2 class="list-h" id="list-h">${nf.format(total)} ${total === 1 ? 'job' : 'jobs'}, salary shown first</h2>
 <ul class="jobs" id="jobs">
 ${shown.map(row).join('\n')}
 </ul>
@@ -264,7 +265,7 @@ ${total ? `<section class="wrap summary" aria-labelledby="sum-h">
 export function buildCountryPages(jobs, { updated, config = {} }) {
   const all = config.countries || [];
   return all.map((c) => {
-    const html = countryPage(c, jobs, { updated, all, maxListed: config.maxListed || 150 });
+    const html = countryPage(c, jobs, { updated, all, maxListed: config.maxListed || 600 });
     return { path: `it-jobs/${c.slug}/index.html`, url: `${BASE}/it-jobs/${c.slug}/`, html, total: jobsIn(jobs, c.name).length };
   });
 }
