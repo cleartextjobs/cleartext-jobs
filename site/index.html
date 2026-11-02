@@ -94,6 +94,8 @@ input[type=search], select { font: inherit; font-size: 0.9375rem; color: var(--i
 
 /* Job list */
 .jobs { list-style: none; margin: 0; padding: 0; }
+/* Until the list is drawn, keep its space so the sections below do not jump (CLS). */
+main[aria-busy="true"] .jobs { min-height: 120vh; }
 .job { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "head pay" "body pay"; gap: 0.25rem 1.5rem; padding-block: 1.15rem; border-bottom: 1px solid var(--rule); }
 .job .head { grid-area: head; min-width: 0; }
 .job .body { grid-area: body; min-width: 0; }
@@ -191,7 +193,7 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
   </div>
 </section>
 
-<main class="wrap">
+<main class="wrap" id="main" aria-busy="true">
   <ul class="jobs" id="list"></ul>
   <div class="empty" id="empty" hidden>
     <p>No jobs match these filters.</p>
@@ -240,6 +242,7 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
     data = window.CLEARTEXT_DATA || await (await fetch('jobs.json', { cache: 'no-cache' })).json();
   } catch (e) {
     $('lede').textContent = 'The job list could not be loaded. Refresh the page to try again.';
+    $('main').removeAttribute('aria-busy');
     return;
   }
   const jobs = data.jobs || [];
@@ -373,6 +376,7 @@ footer .legal { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid
   $('next').addEventListener('click', () => go(1));
   $('clear').addEventListener('click', () => { $('f').reset(); render(true); });
   render(true);
+  $('main').removeAttribute('aria-busy');
 
   // Hero: a real salary from today's list resolves out of scrambled characters.
   const samples = jobs.filter((j) => j.salary && j.salary.period === 'year' && j.salary.currency === 'EUR').slice(0, 12);
