@@ -64,10 +64,15 @@ a { color: var(--link); }
 .hero { padding-block: 1.75rem 2rem; display: grid; gap: 1.25rem; }
 .hero h1 { margin: 0; font-size: var(--step-3); line-height: 1.04; letter-spacing: -0.025em; font-weight: 700; max-width: 16ch; text-wrap: balance; }
 .decrypt { display: grid; gap: 0.35rem; max-width: 40rem; }
-.decrypt .role { color: var(--muted); font-size: var(--step--1); min-height: 1.4em; }
+.decrypt .role { color: var(--muted); font-size: var(--step--1); min-height: 1.5em; }
 .decrypt .line { font-family: var(--mono); font-size: clamp(1rem, 0.8rem + 1.1vw, 1.45rem); }
 .decrypt .key { color: var(--muted); }
 .lede { margin: 0; color: var(--muted); max-width: 44rem; }
+/* Reserve the lines the job count will take, so the filters and list below do not jump when it loads (CLS). */
+.lede { min-height: 3em; }
+@media (max-width: 440px) { .lede { min-height: 4.5em; } }
+/* On phones the update date and "Feature a job" take their own line from the start, so the header does not grow when the date arrives. */
+@media (max-width: 600px) { .top .updated { flex-basis: 100%; min-height: 1.5em; } }
 .by-country { font-size: 0.9375rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; }
 .by-country a { font-weight: 500; }
 .lede strong { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
