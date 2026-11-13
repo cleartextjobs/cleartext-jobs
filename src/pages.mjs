@@ -101,7 +101,7 @@ ${stats.families.map((f) => `<tr><td>${esc(f.family)}</td><td class="num">${esc(
   const ld = {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'CollectionPage', name: `IT jobs in ${label}`, url, description: desc, dateModified: updated, isPartOf: { '@type': 'WebSite', name: 'Cleartext Jobs', url: `${BASE}/` } },
+      { '@type': 'CollectionPage', name: `IT jobs in ${label}`, url, description: desc, dateModified: updated, isPartOf: { '@type': 'WebSite', '@id': `${BASE}/#website`, name: 'Cleartext Jobs', url: `${BASE}/` }, publisher: { '@id': `${BASE}/#organization` } },
       { '@type': 'BreadcrumbList', itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Cleartext Jobs', item: `${BASE}/` },
         { '@type': 'ListItem', position: 2, name: `IT jobs in ${label}`, item: url },
