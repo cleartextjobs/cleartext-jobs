@@ -4,6 +4,7 @@
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import { classify, seniority } from '../src/normalize.mjs';
 import { buildCountryPages } from '../src/pages.mjs';
+import { prerenderHome } from '../src/home.mjs';
 
 const root = new URL('..', import.meta.url);
 const out = new URL('sandbox/', root);
@@ -28,7 +29,7 @@ const data = {
 const banner = '<div style="background:#1F2937;color:#F9FAFB;font:600 13px/1.4 system-ui,sans-serif;text-align:center;padding:6px 12px">SANDBOX · test copy with sample jobs · the live site is cleartextjobs.com</div>';
 
 // Home page: the part between the page markers, with the data embedded.
-const html = await read('site/index.html');
+const html = prerenderHome(await read('site/index.html'), data);
 const home = html.slice(html.indexOf('<!--page-start-->') + 17, html.indexOf('<!--page-end-->'))
   .replace(/<title>[^<]*<\/title>/, '<title>Cleartext Jobs</title>')
   .replace('</head>\n<body>\n', `${banner}\n`)

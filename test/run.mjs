@@ -169,3 +169,18 @@ console.log('feature checks passed');
   assert.equal(fr.total, 0); assert.ok(fr.html.includes('No open IT roles'));
   console.log('country page checks passed');
 }
+{
+  const { prerenderHome } = await import('../src/home.mjs');
+  const { readFile } = await import('node:fs/promises');
+  const tpl = await readFile(new URL('../site/index.html', import.meta.url), 'utf8');
+  const mk = (i, o) => ({ title: `Engineer <${i}>`, company: `Co ${i}`, url: `https://x.test/${i}`, source: 'company', family: 'Software development', seniority: 'Senior', workplace: 'Remote', countries: ['Portugal'], region: '', location: 'Porto', salary: null, stack: ['Go'], posted: '2026-11-20', ...o });
+  const jobs = Array.from({ length: 23 }, (_, i) => mk(i, i === 5 ? { salary: { min: 50000, max: 60000, currency: 'EUR', period: 'year' } } : {}));
+  const data = { updated: '2026-11-24T10:00:00Z', total: 23, withSalary: 1, companies: 23, site: { contactEmail: 'a@b.test' }, jobs };
+  const once = prerenderHome(tpl, data, { now: Date.parse('2026-11-24T10:00:00Z') });
+  assert.equal(prerenderHome(once, data, { now: Date.parse('2026-11-24T10:00:00Z') }), once, 'prerender is idempotent');
+  assert.equal((once.match(/<ul class="jobs" id="list">[\s\S]*?<\/ul>/)[0].match(/<li class="job/g) || []).length, 10);
+  assert.ok(once.indexOf('Engineer &lt;5&gt;') < once.indexOf('Engineer &lt;0&gt;'), 'salary jobs first');
+  assert.ok(once.includes('<strong>23</strong> open IT roles') && once.includes('Page 1 of 3') && once.includes('Updated 24 Nov 2026'));
+  assert.ok(once.includes('<main class="wrap" id="main">') && once.includes('id="pager" aria-label="Pages">'));
+  console.log('home prerender checks passed');
+}

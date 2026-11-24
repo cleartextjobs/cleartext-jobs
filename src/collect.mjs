@@ -2,6 +2,7 @@
 // Run: node src/collect.mjs   (Node 20+, no dependencies)
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { buildCountryPages } from './pages.mjs';
+import { prerenderHome } from './home.mjs';
 import { fromGreenhouse, fromLever, fromAshby, fromArbeitnow, fromSmartRecruiters, fromRecruitee, finalize, dedupe, applyFeatured } from './normalize.mjs';
 
 const ROOT = new URL('..', import.meta.url);
@@ -112,6 +113,9 @@ const summary = {
 await mkdir(new URL('site/', ROOT), { recursive: true });
 const { _notes, ...siteSettings } = site;
 await writeFile(new URL('site/jobs.json', ROOT), JSON.stringify({ ...summary, site: siteSettings, jobs }));
+// Home page with the first page of jobs written into the HTML, for search engines.
+const homeFile = new URL('site/index.html', ROOT);
+await writeFile(homeFile, prerenderHome(await readFile(homeFile, 'utf8'), { ...summary, site: siteSettings, jobs }, { now }));
 // Country pages for search engines (config/pages.json).
 const pages = buildCountryPages(jobs, { updated: summary.updated, config: pagesConfig, site: siteSettings });
 for (const p of pages) {
